@@ -6,7 +6,7 @@ starts, the players all have 30 seconds to select their answer. Each player rece
 based on the question difficulty and how quickly they answer the question. When the game is over
 all players can check the leaderboard to view how well they compare against everyone else.
 
-[Trivia Townes Full Repository](http://google.com)
+[Trivia Townes Full Repository](https://github.com/jamesleu/RevatureApps/tree/master/Trivia%20Townes)
 
 ## Roles/Responsibilities
 * Utilized Angular to create a single-page application
