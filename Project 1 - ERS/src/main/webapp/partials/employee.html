@@ -1,0 +1,235 @@
+<style>
+#customers {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:hover {background-color: #4CAF50;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style>
+
+
+<div class = "jumbotron">
+		<!-- <div class="form-group">
+		    <label for="email">Email address</label>
+		    <input type="email" class="form-control" id="email" placeholder="name@example.com">
+		  </div> -->
+		  <h1>Employee</h1>
+		  <div class="form-group">
+		    <label for="reim_amount">Reimbursement Amount</label>
+		    <input type="number" id="reimb_amount" placeholder="Enter Amount" required autofocus>
+		  </div>
+		  <div class="form-group">
+		      <select class="form-control" id="dataType">
+			      <option value="3">Food</option>
+			      <option value="2">Lodging</option>
+			      <option value="4">Travel</option>
+			      <option value="1">Other</option>
+			    </select>
+		  </div>
+		  <div class="form-group">
+		    <label for="reimb_desc">Reimbursement Description</label>
+		    <textarea class="form-control" id="reimb_desc" rows="3" placeholder="Reimbursement Description (250 characters)" required autofocus></textarea>
+		  </div>
+		  <div class ="form-group">
+		  	<button class = "btn btn-lg btn-primary btn-block" id = "submit_reim">Submit</button>
+		  </div>
+		  
+	<h2>Reimbursements</h2>
+	<table id = "customers" class = "table table-dark table-hover">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Amount</th>
+			<th scope="col">Submitted</th>
+			<th scope="col">Resolved</th>
+			<th scope="col">Description</th>
+			<th scope="col">Author</th>
+			<!-- <th scope="col">Resolver</th> -->
+			<th scope="col">Status</th>
+			<th scope="col">Type</th>
+
+		</tr>
+		</thead>
+		<tbody id='reimInfo'>
+
+		</tbody>
+	</table>
+	
+	<script>
+	
+	$(() =>{
+		
+		loadReimbursements();
+		$('#submit_reim').on('click', createReim);
+		
+	})
+	
+	function createReim() {
+	
+		/* REIMB_AMOUNT, REIMB_DESCRIPTION, REIMB_SUBMITTED, REIMB_RESOLVED, REIMB_AUTHOR, REIMB_RESOLVER, REIMB_STATUS_ID, REIMB_TYPE_ID) */
+		var time = new Date().getTime()
+		var obj = {
+			
+			amount: $('#reimb_amount').val(),
+			description: $('#reimb_desc').val(),
+			submitted: time,
+			resolved: null,
+			author: 1,
+	 		resolver: 2,
+			status_id: 3,
+			type_id: $('#dataType').val()
+	
+		}
+		
+		var toSend = JSON.stringify(obj);
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			
+			if(xhr.readyState == 4) {
+				console.log("inside create");
+				console.log("create", toSend);
+				loadEmployeeReims();
+				
+			}
+			
+		}
+		
+		xhr.open("POST", "eCreate", true);
+		xhr.send(toSend);
+		
+	
+	}
+	function loadReimbursements() {
+		
+		console.log('inside reimburse');
+		
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			
+			if(xhr.readyState == 4 && xhr.status == 200) {
+				
+	//			$('#view').html(xhr.responseText);
+				let reimbursements = JSON.parse(xhr.responseText);
+				console.log('1', xhr.responseText);
+				for(let reims of reimbursements) {
+					
+					console.log(reims);
+					reimburseLists(reims);
+					
+				}
+				
+			}
+			
+		}
+		
+		xhr.open("GET", "eCreate", true);
+		xhr.send();
+		
+	}
+	
+	function loadEmployeeReims() {
+		
+		console.log('inside employee Reimburse');
+		
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {
+			
+			if(xhr.readyState == 4 && xhr.status == 200) {
+				
+				let reimbursements = JSON.parse(xhr.responseText);
+				/* console.log("reimb", reimbursements); */
+				let r = reimbursements.pop();
+ 				/* console.log('employee: ', r); */
+ 				reimburseLists(r);
+				
+			}
+			
+		}
+		
+		xhr.open("GET", "manager", true);
+		xhr.send();
+		
+	}
+	
+	
+	function reimburseLists(reims){
+		
+		let status = "";
+		let type = "";
+		
+		switch(reims.status_id) {
+		    case 1:
+		        status = "Approved";
+		        break;
+		        
+		    case 2:
+		        status = "Denied";
+		        break;
+		    
+		    case 3:
+		        status = "Pending";
+		        break;
+		     
+		    default:
+		    	break;
+		
+		}
+
+		 switch(reims.type_id) {
+		 
+		    case 1:
+		        type = "Other";
+		        break;
+		        
+		    case 2:
+		        type = "Lodging";
+		        break;
+		    
+		    case 3:
+		        type = "Food";
+		        break;
+		    
+		    case 4:
+		        type = "Travel";
+		        break;
+		        
+		    default:
+		    	break;
+		    
+		 
+		}
+		var submitTime = new Date(reims.submitted);
+		var info = $(`
+				<tr>
+					<th>${reims.id}</th>
+					<td>${reims.amount}</td>
+					<td>${submitTime}</td>
+					<td>${reims.resolved}</td>
+					<td>${reims.description}</td>
+					<td>${reims.author}</td>
+					<td>${status}</td>
+					<td>${type}</td>
+				</tr>`
+				)
+		
+		$('#reimInfo').append(info);
+		
+	}
+
+
+</script>
+</div>
