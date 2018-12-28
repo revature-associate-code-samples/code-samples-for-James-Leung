@@ -4,7 +4,7 @@ for any expenses they incurred on company time. Employees can login and submit r
 view their past tickets, and any pending requests. Managers will also be able to login and view all
 reimbursement requests with the the ability to approve/deny them.
 
-Full Repository:
+[Expense Reimbursement System](https://github.com/jamesleu/RevatureApps/tree/master/Reimbursement)
 
 
 ## Roles/Responsibilities

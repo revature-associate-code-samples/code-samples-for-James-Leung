@@ -3,11 +3,10 @@ A console based Java application that allows users to create an account or login
 have the ability to withdraw or deposit money into various accounts. They can also create from a few different types of
 accounts.
 
-Full Repository:
+[Bank Application Full Repository](https://github.com/jamesleu/RevatureApps/tree/master/Bank)
 
 
 ## Roles/Responsibilities
-
 * Implemented account features such as deposits/withdrawals, login, new account.
 * Utilized JDBC to connect to the database.
 * Employed Oracle SQL to persist all user data
